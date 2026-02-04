@@ -14,20 +14,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProfileController extends AbstractController
 {
     #[Route('/profile', name: 'profile')]
-    public function profile(Request $request, EntityManagerInterface $em): Response
+    public function profile(EntityManagerInterface $em): Response
     {
-        $session = $request->getSession();
-        $userId = $session->get('user_id');
-
-        if (!$userId) {
-            return $this->redirectToRoute('home');
-        }
-
-        $user = $em->getRepository(User::class)->find($userId);
+        $user = $this->getUser();
 
         if (!$user) {
-            $session->clear();
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('auth_login');
         }
 
         return $this->render('profile/index.html.twig', [
