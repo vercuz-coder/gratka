@@ -1,0 +1,14 @@
+{# templates/home/_like_button.html.twig #}
+{% if app.user %}
+    <button type="button" 
+            class="like-button {{ liked ? 'liked' : '' }}" 
+            data-url="{{ path('photo_like', {id: photo.id}) }}">
+        <span class="like-icon">{{ liked ? '❤️' : '🤍' }}</span>
+        <span class="like-count">{{ photo.likeCounter }}</span>
+    </button>
+{% else %}
+    <span class="like-button disabled" title="Login to like">
+        🤍
+        <span>{{ photo.likeCounter }}</span>
+    </span>
+{% endif %}

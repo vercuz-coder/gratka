@@ -1,0 +1,35 @@
+<div class="filter-panel">
+	<div class="filter-header">
+		<h3>🔍 Filter Photos</h3>
+	</div>
+	{{ form_start(filterForm, {'attr': {'class': 'filter-form'}}) }}
+	<div class="form-group">
+		{{ form_label(filterForm.location) }}
+		{{ form_widget(filterForm.location) }}
+	</div>
+	<div class="form-group">
+		{{ form_label(filterForm.camera) }}
+		{{ form_widget(filterForm.camera) }}
+	</div>
+	<div class="form-group">
+		{{ form_label(filterForm.description) }}
+		{{ form_widget(filterForm.description) }}
+	</div>
+	<div class="form-group">
+		{{ form_label(filterForm.username) }}
+		{{ form_widget(filterForm.username) }}
+	</div>
+	<div class="form-group">
+		{{ form_label(filterForm.takenAtFrom) }}
+		{{ form_widget(filterForm.takenAtFrom) }}
+	</div>
+	<div class="form-group">
+		{{ form_label(filterForm.takenAtTo) }}
+		{{ form_widget(filterForm.takenAtTo) }}
+	</div>
+	<div class="filter-actions">
+		<button type="submit" class="btn-filter btn-filter-primary">🔍 Search</button>
+		<a href="{{ path('home') }}" class="btn-filter btn-filter-secondary">Clear Filters</a>
+	</div>
+	{{ form_end(filterForm) }}
+</div>

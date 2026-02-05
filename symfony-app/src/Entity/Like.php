@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LikeRepository::class)]
 #[ORM\Table(name: 'likes')]
+#[ORM\Index(columns: ['user_id'], name: 'idx_likes_user_id')]
+#[ORM\Index(columns: ['photo_id'], name: 'idx_likes_photo_id')]
 class Like
 {
     #[ORM\Id]

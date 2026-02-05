@@ -4,37 +4,38 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\DTO\PhotoFilter;
 use App\Entity\User;
+use App\Form\PhotoFilterType;
 use App\Repository\LikeRepository;
 use App\Repository\PhotoRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/", name="home")
-     * @return JsonResponse
-     */
-    public function index(Request $request, EntityManagerInterface $em, ManagerRegistry $managerRegistry): Response
-    {
-        $photoRepository = new PhotoRepository($managerRegistry);
-        $likeRepository = new LikeRepository($managerRegistry);
+    public function __construct(
+        private readonly PhotoRepository $photoRepository,
+        private readonly LikeRepository $likeRepository,
+    ) {}
 
-        $photos = $photoRepository->findAllWithUsers();
+    #[Route('/', name: 'home')]
+    public function index(Request $request): Response
+    {
+        $filter = new PhotoFilter();
+        $filterForm = $this->createForm(PhotoFilterType::class, $filter);
+        $filterForm->handleRequest($request);
+
+        $photos = $this->photoRepository->findFiltered($filter);
 
         $currentUser = $this->getUser();
         $userLikes = [];
 
         if ($currentUser instanceof User) {
             foreach ($photos as $photo) {
-                $likeRepository->setUser($currentUser);
-                $userLikes[$photo->getId()] = $likeRepository->hasUserLikedPhoto($photo);
+                $userLikes[$photo->getId()] = null !== $this->likeRepository->findOneByUserAndPhoto($currentUser, $photo);
             }
         }
 
@@ -42,6 +43,7 @@ class HomeController extends AbstractController
             'photos' => $photos,
             'currentUser' => $currentUser,
             'userLikes' => $userLikes,
+            'filterForm' => $filterForm->createView(),
         ]);
     }
 }
