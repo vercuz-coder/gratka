@@ -23,15 +23,13 @@ class PhotoController extends AbstractController
         $likeRepository = new LikeRepository($managerRegistry);
         $likeService = new LikeService($likeRepository);
 
-        $session = $request->getSession();
-        $userId = $session->get('user_id');
+        $user = $this->getUser();
 
-        if (!$userId) {
+        if (!$user instanceof User) {
             $this->addFlash('error', 'You must be logged in to like photos.');
             return $this->redirectToRoute('home');
         }
 
-        $user = $em->getRepository(User::class)->find($userId);
         $photo = $em->getRepository(Photo::class)->find($id);
 
         $likeRepository->setUser($user);
