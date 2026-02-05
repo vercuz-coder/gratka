@@ -26,6 +26,6 @@ class AuthController extends AbstractController
     #[Route('/auth/logout', name: 'auth_logout')]
     public function logout(): void
     {
-        throw new \LogicException('This method can be skipped.');
+        throw new \LogicException('This method should be skipped. It is handled by Symfony Security.');
     }
 }
