@@ -24,6 +24,9 @@
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3.93",
+    "phpstan/phpstan": "^2.1",
+    "phpstan/phpstan-doctrine": "^2.0",
+    "phpstan/phpstan-symfony": "^2.0",
     "phpunit/phpunit": "^10.5",
     "symfony/browser-kit": "6.4.*",
     "symfony/css-selector": "6.4.*",
@@ -58,7 +61,9 @@
       "@auto-scripts"
     ],
     "lint": "php-cs-fixer fix --dry-run --verbose --show-progress=dots",
-    "fix": "php-cs-fixer fix --verbose --show-progress=dots"
+    "fix": "php-cs-fixer fix --verbose --show-progress=dots",
+    "phpstan": "phpstan analyse",
+    "phpstan:baseline": "phpstan analyse --generate-baseline"
   },
   "extra": {
     "symfony": {
