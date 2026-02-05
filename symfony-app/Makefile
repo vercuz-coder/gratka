@@ -33,3 +33,9 @@ run_dry_fixer:
  
 run_fixer:
 	$(DOCKER_CMD) php vendor/bin/php-cs-fixer fix --verbose --show-progress=dots
+
+run_phpstan:
+	$(DOCKER_CMD) php vendor/bin/phpstan analyse --memory-limit=512M
+
+run_phpstan_baseline:
+	$(DOCKER_CMD) php vendor/bin/phpstan analyse --memory-limit=512M --generate-baseline
