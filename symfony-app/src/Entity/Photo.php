@@ -9,6 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PhotoRepository::class)]
 #[ORM\Table(name: 'photos')]
+#[ORM\Index(columns: ['user_id'], name: 'idx_photos_user_id')]
+#[ORM\Index(columns: ['location'], name: 'idx_photos_location')]
+#[ORM\Index(columns: ['camera'], name: 'idx_photos_camera')]
+#[ORM\Index(columns: ['taken_at'], name: 'idx_photos_taken_at')]
 class Photo
 {
     #[ORM\Id]

@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'auth_tokens')]
+#[ORM\Index(columns: ['user_id'], name: 'idx_auth_tokens_user_id')]
+#[ORM\Index(columns: ['token'], name: 'idx_auth_tokens_token')]
 class AuthToken
 {
     #[ORM\Id]
