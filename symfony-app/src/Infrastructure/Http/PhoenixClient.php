@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Http;
 
 use App\Domain\Port\PhoenixClientInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Exception;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class PhoenixClient implements PhoenixClientInterface
 {
@@ -19,20 +20,20 @@ class PhoenixClient implements PhoenixClientInterface
     public function getPhotos(string $token): array
     {
         try {
-            $response = $this->client->request('GET', $this->baseUrl . '/photos', [
+            $response = $this->client->request('GET', $this->baseUrl.'/photos', [
                 'headers' => [
                     'access-token' => $token,
                 ],
             ]);
 
-            if ($response->getStatusCode() !== 200) {
+            if (200 !== $response->getStatusCode()) {
                 return [];
             }
 
             $data = $response->toArray();
 
             return $data['photos'] ?? [];
-        } catch (TransportExceptionInterface|\Exception $e) {
+        } catch (TransportExceptionInterface|Exception $e) {
             return [];
         }
     }
@@ -41,13 +42,13 @@ class PhoenixClient implements PhoenixClientInterface
     {
         try {
             // For now use existing photos endpoint to validate token
-            $response = $this->client->request('GET', $this->baseUrl . '/photos', [
+            $response = $this->client->request('GET', $this->baseUrl.'/photos', [
                 'headers' => [
                     'access-token' => $token,
                 ],
             ]);
 
-            return $response->getStatusCode() === 200;
+            return 200 === $response->getStatusCode();
         } catch (TransportExceptionInterface $e) {
             return false;
         }

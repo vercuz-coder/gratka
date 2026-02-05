@@ -7,7 +7,6 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -63,6 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username): self
     {
         $this->username = $username;
+
         return $this;
     }
 
@@ -74,6 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -85,6 +86,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setName(?string $name): self
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -96,6 +98,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastName(?string $lastName): self
     {
         $this->lastName = $lastName;
+
         return $this;
     }
 
@@ -107,6 +110,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAge(?int $age): self
     {
         $this->age = $age;
+
         return $this;
     }
 
@@ -118,6 +122,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setBio(?string $bio): self
     {
         $this->bio = $bio;
+
         return $this;
     }
 
@@ -129,6 +134,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPhoenixApiToken(?string $phoenixApiToken): self
     {
         $this->phoenixApiToken = $phoenixApiToken;
+
         return $this;
     }
 

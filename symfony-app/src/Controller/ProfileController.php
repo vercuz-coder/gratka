@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Form\UserProfileType;
 use App\Service\PhotoImportService;
 use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,6 +40,7 @@ class ProfileController extends AbstractController
                 // Validate token before saving
                 if (!$this->phoenixClient->validateToken($token)) {
                     $this->addFlash('error', 'Wrong access token. Please check your token and try again.');
+
                     return $this->redirectToRoute('profile');
                 }
             }
@@ -65,15 +67,14 @@ class ProfileController extends AbstractController
             $importedCount = $this->photoImportService->importPhotosForUser($user);
 
             if ($importedCount > 0) {
-                $this->addFlash('success', sprintf('Successfully imported %d photo(s).', $importedCount));
+                $this->addFlash('success', \sprintf('Successfully imported %d photo(s).', $importedCount));
             } else {
                 $this->addFlash('info', 'All photos have already been imported.');
             }
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $this->addFlash('error', $e->getMessage());
         }
 
         return $this->redirectToRoute('profile');
     }
 }
-

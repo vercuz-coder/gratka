@@ -62,5 +62,4 @@ class PhotoRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
-
 }

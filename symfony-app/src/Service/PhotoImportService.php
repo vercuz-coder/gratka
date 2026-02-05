@@ -7,7 +7,9 @@ namespace App\Service;
 use App\Domain\Port\PhoenixClientInterface;
 use App\Entity\Photo;
 use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
 
 class PhotoImportService
 {
@@ -22,12 +24,12 @@ class PhotoImportService
         $token = $user->getPhoenixApiToken();
 
         if (!$token) {
-            throw new \RuntimeException('Please set your Phoenix API token first.');
+            throw new RuntimeException('Please set your Phoenix API token first.');
         }
 
         // Validate token
         if (!$this->phoenixClient->validateToken($token)) {
-            throw new \RuntimeException('Wrong access token. Please check your token and try again.');
+            throw new RuntimeException('Wrong access token. Please check your token and try again.');
         }
 
         // Fetch photos from Phoenix API
@@ -65,12 +67,12 @@ class PhotoImportService
             $photo->setCamera($photoData['camera'] ?? null);
 
             if (!empty($photoData['taken_at'])) {
-                $photo->setTakenAt(new \DateTimeImmutable($photoData['taken_at']));
+                $photo->setTakenAt(new DateTimeImmutable($photoData['taken_at']));
             }
 
             $this->em->persist($photo);
             $existingUrls[$photoUrl] = true;
-            $importedCount++;
+            ++$importedCount;
         }
 
         $this->em->flush();
