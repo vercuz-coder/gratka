@@ -6,8 +6,8 @@ namespace App\Controller;
 
 use App\Entity\Photo;
 use App\Entity\User;
-use App\Likes\LikeRepository;
-use App\Likes\LikeService;
+use App\Repository\LikeRepository;
+use App\Service\LikeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,15 +23,9 @@ class PhotoController extends AbstractController
         $likeRepository = new LikeRepository($managerRegistry);
         $likeService = new LikeService($likeRepository);
 
-        $session = $request->getSession();
-        $userId = $session->get('user_id');
+        /** @var User $user */
+        $user = $this->getUser();
 
-        if (!$userId) {
-            $this->addFlash('error', 'You must be logged in to like photos.');
-            return $this->redirectToRoute('home');
-        }
-
-        $user = $em->getRepository(User::class)->find($userId);
         $photo = $em->getRepository(Photo::class)->find($id);
 
         $likeRepository->setUser($user);

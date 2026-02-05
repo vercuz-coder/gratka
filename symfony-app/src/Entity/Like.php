@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Likes;
+namespace App\Entity;
 
+use App\Repository\LikeRepository;
 use App\Entity\Photo;
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
@@ -18,11 +19,11 @@ class Like
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private User $user;
 
     #[ORM\ManyToOne(targetEntity: Photo::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Photo $photo;
 
     #[ORM\Column(type: 'datetime')]

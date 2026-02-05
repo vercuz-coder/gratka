@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Likes\LikeRepository;
+use App\Repository\LikeRepository;
 use App\Repository\PhotoRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -28,19 +28,13 @@ class HomeController extends AbstractController
 
         $photos = $photoRepository->findAllWithUsers();
 
-        $session = $request->getSession();
-        $userId = $session->get('user_id');
-        $currentUser = null;
+        $currentUser = $this->getUser();
         $userLikes = [];
 
-        if ($userId) {
-            $currentUser = $em->getRepository(User::class)->find($userId);
-
-            if ($currentUser) {
-                foreach ($photos as $photo) {
-                    $likeRepository->setUser($currentUser);
-                    $userLikes[$photo->getId()] = $likeRepository->hasUserLikedPhoto($photo);
-                }
+        if ($currentUser instanceof User) {
+            foreach ($photos as $photo) {
+                $likeRepository->setUser($currentUser);
+                $userLikes[$photo->getId()] = $likeRepository->hasUserLikedPhoto($photo);
             }
         }
 

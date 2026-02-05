@@ -1,4 +1,5 @@
-# TODO: fix migrations executor
 doctrine_migrations:
     migrations_paths:
         'DoctrineMigrations': '%kernel.project_dir%/migrations'
+    transactional: true
+    all_or_nothing: true
