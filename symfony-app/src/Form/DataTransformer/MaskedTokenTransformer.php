@@ -21,17 +21,17 @@ class MaskedTokenTransformer implements DataTransformerInterface
      */
     public function transform(mixed $value): mixed
     {
-        if (!$value || !is_string($value)) {
+        if (!$value || !\is_string($value)) {
             return '';
         }
 
         $this->originalToken = $value;
 
-        if (strlen($value) <= self::VISIBLE_CHARS * 2) {
-            return str_repeat('*', strlen($value));
+        if (\strlen($value) <= self::VISIBLE_CHARS * 2) {
+            return str_repeat('*', \strlen($value));
         }
 
-        return sprintf(
+        return \sprintf(
             self::MASK_PATTERN,
             substr($value, 0, self::VISIBLE_CHARS),
             substr($value, -self::VISIBLE_CHARS)
@@ -43,7 +43,7 @@ class MaskedTokenTransformer implements DataTransformerInterface
      */
     public function reverseTransform(mixed $value): mixed
     {
-        if (!$value || !is_string($value)) {
+        if (!$value || !\is_string($value)) {
             return null;
         }
 

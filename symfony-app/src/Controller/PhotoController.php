@@ -17,7 +17,8 @@ class PhotoController extends AbstractController
     public function __construct(
         private readonly LikeRepository $likeRepository,
         private readonly LikeService $likeService,
-    ) {}
+    ) {
+    }
 
     #[Route('/photo/{id}/like', name: 'photo_like', methods: ['POST'])]
     public function like(Photo $photo): Response

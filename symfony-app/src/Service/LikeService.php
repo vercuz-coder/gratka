@@ -33,9 +33,9 @@ class LikeService
             $like->setPhoto($photo);
 
             $this->likeRepository->save($like);
-            
+
             $photo->setLikeCounter($photo->getLikeCounter() + 1);
-            
+
             $this->entityManager->flush();
         } catch (Throwable $e) {
             throw new Exception('Something went wrong while liking the photo');

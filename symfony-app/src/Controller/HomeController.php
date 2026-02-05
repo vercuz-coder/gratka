@@ -19,7 +19,8 @@ class HomeController extends AbstractController
     public function __construct(
         private readonly PhotoRepository $photoRepository,
         private readonly LikeRepository $likeRepository,
-    ) {}
+    ) {
+    }
 
     #[Route('/', name: 'home')]
     public function index(Request $request): Response

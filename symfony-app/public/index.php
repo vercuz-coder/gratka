@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Kernel;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
 
-if (PHP_SAPI === 'cli-server') {
-    $_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    if (is_file(__DIR__ . $_path)) {
+if (\PHP_SAPI === 'cli-server') {
+    $_path = parse_url($_SERVER['REQUEST_URI'], \PHP_URL_PATH);
+    if (is_file(__DIR__.$_path)) {
         return false;
     }
 }
@@ -18,7 +20,7 @@ $env = $_SERVER['APP_ENV'] ?? 'dev';
 $debug = (bool) ($_SERVER['APP_DEBUG'] ?? ('prod' !== $env));
 
 if ($debug) {
-    umask(0000);
+    umask(0o000);
     Debug::enable();
 }
 

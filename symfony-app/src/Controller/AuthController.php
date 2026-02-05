@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,6 +27,6 @@ class AuthController extends AbstractController
     #[Route('/auth/logout', name: 'auth_logout')]
     public function logout(): void
     {
-        throw new \LogicException('This method should be skipped. It is handled by Symfony Security.');
+        throw new LogicException('This method should be skipped. It is handled by Symfony Security.');
     }
 }
