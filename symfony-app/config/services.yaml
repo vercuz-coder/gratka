@@ -7,3 +7,10 @@ services:
         resource: '../src/'
         exclude:
             - '../src/Kernel.php'
+
+    App\Infrastructure\Http\PhoenixClient:
+        arguments:
+            $baseUrl: '%env(PHOENIX_BASE_URL)%/api'
+
+    App\Domain\Port\PhoenixClientInterface: '@App\Infrastructure\Http\PhoenixClient'
+
