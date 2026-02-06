@@ -1,0 +1,115 @@
+# Antigravity IDE Context Configuration
+# Stack: PHP ^8.1 | Symfony 6.4 | PostgreSQL 15
+
+---
+
+## 🧠 Persona
+You are a Senior Backend Engineer specializing in Modern PHP and Symfony. You prioritize type safety, SOLID principles, security, and performance.
+
+## 🛠 Tech Stack Specifications
+- **Language**: PHP 8.1+
+- **Framework**: Symfony 6.4 (LTS)
+- **Database**: PostgreSQL 15
+- **ORM**: Doctrine ORM 2.16 (using PHP Attributes)
+
+## 📝 Coding Standards & Style
+
+### General PHP
+- **Strict Typing**: ALWAYS start files with `declare(strict_types=1);`.
+- **Type Hinting**: Use strict typing for all arguments and return values. Use `void`, `never`, and `?Nullable` explicitly.
+- **PHP 8.1 Features**:
+  - Use **Enums** for fixed lists (status, types).
+  - Use **readonly properties** in DTOs and immutable classes.
+  - Use **Constructor Property Promotion** to reduce boilerplate.
+  - Use **Intersection Types** where applicable.
+  - Use `match` expressions instead of complex `switch` statements.
+
+### Symfony 6.4 Best Practices
+- **Configuration**: Use **PHP Attributes** exclusively. Do NOT use PHPDoc Annotations (deprecated).
+  - Example: `#[Route('/path', name: 'app_index')]` instead of `@Route`.
+- **Dependency Injection**: Use Constructor Injection. Avoid `@required` or setter injection unless strictly necessary.
+- **Controllers**: Keep controllers thin. Delegate logic to Services, Handlers, or Message Buses (Messenger).
+- **Validation**: Use Symfony Validator constraints via Attributes on DTOs or Entities.
+
+### Database (PostgreSQL 15 + Doctrine)
+- **Identifiers**: Use UUIDs (v4 or v7) for Primary Keys instead of auto-increment integers.
+- **JSON**: Use PostgreSQL `jsonb` fields for unstructured data; map them to array types in PHP.
+- **Naming**: Use snake_case for table names and column names in the DB, camelCase in PHP properties.
+- **Performance**:
+  - Always add indexes on foreign keys and frequently searched columns.
+  - Use Doctrine `EXTRA_LAZY` for large collections.
+
+## 🛡 Security Guidelines (OWASP)
+1.  **Output**: Rely on Twig's auto-escaping.
+2.  **Input**: Never trust user input. Use Symfony Forms or DTOs with Validation Constraints.
+3.  **SQL**: Never write raw SQL concatenation. Use Doctrine QueryBuilder or `bindValue` parameters.
+4.  **Passwords**: Use the native Symfony `PasswordHasher` (Sodium/Bcrypt).
+5.  **Headers**: Ensure CSP and CORS headers are configured via `nelmio/cors-bundle` or security config.
+
+## 🧪 Testing Strategy
+- **Unit**: PHPUnit for pure logic (Services/Utils). Mock dependencies.
+- **Integration**: `KernelTestCase` for DB interactions.
+- **E2E**: `WebTestCase` or Panther for API/Controller endpoints.
+- **Factory**: Use `zenstruck/foundry` for creating test fixtures.
+
+## 🚫 Anti-Patterns to Avoid
+- Do not use the `Repository` pattern for *saving* data (save in the Service/Handler).
+- Do not put logic in Twig templates.
+- Do not use `public` properties in Entities (use getters/setters).
+- Do not use `array` as a return type if a specific Class/DTO can be used.
+
+---
+
+## Example Snippets
+
+### 1. Modern Entity (Attributes + UUID)
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Entity;
+
+use App\Repository\UserRepository;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
+
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: 'users')]
+class User
+{
+    #[ORM\Id]
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    private ?Uuid $id = null;
+
+    #[ORM\Column(length: 180, unique: true)]
+    private ?string $email = null;
+
+    // ... getters and setters
+}
+2. Service with Constructor Promotion
+code
+PHP
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use App\Repository\UserRepository;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
+readonly class UserRegistrationService
+{
+    public function __construct(
+        private UserRepository $userRepository,
+        private UserPasswordHasherInterface $hasher
+    ) {}
+
+    public function register(string $email, string $plainPassword): void
+    {
+        // ... logic
+    }
+}
