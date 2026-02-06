@@ -19,7 +19,7 @@ class HomeControllerTest extends WebTestCase
     }
 
     public function testHomePageDisplaysPhotos(): void
-    {   
+    {
         PhotoFactory::createMany(3);
 
         $client = static::createClient();

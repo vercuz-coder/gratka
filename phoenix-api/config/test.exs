@@ -1,8 +1,8 @@
 import Config
 
 config :phoenix_api, PhoenixApi.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: System.get_env("DB_USER", "postgres"),
+  password: System.get_env("DB_PASSWORD", "postgres"),
   hostname: System.get_env("DB_HOST", "localhost"),
   database: "phoenix_api_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,

@@ -65,6 +65,24 @@ Ten projekt składa się z dwóch oddzielnych aplikacji z własnymi bazami danyc
   - Nazwa bazy danych: `phoenix_api`
 
 ## Szybki start
+
+### 1. Konfiguracja środowiska
+```bash
+# Skopiuj przykładowy plik konfiguracyjny i uzupełnij wartości
+cp .env.example .env
+
+```
+
+Wymagane zmienne środowiskowe w `.env`:
+| Zmienna | Opis |
+|---------|------|
+| `POSTGRES_USER` | Użytkownik PostgreSQL |
+| `POSTGRES_PASSWORD` | Hasło PostgreSQL |
+| `APP_SECRET` | Klucz Symfony |
+| `SECRET_KEY_BASE` | Klucz Phoenix |
+
+
+### 2. Uruchomienie kontenerów
 ```bash
 docker-compose up -d
 
@@ -83,9 +101,46 @@ Dostęp do aplikacji:
 
 ## Komendy Symfony
 
-### Migracja bazy danych
+Wszystkie komendy dostępne są przez Makefile w `symfony-app/`. Uruchom `make` bez argumentów, aby zobaczyć listę dostępnych komend.
+
+### Cache
 ```bash
-docker-compose exec symfony php bin/console doctrine:migrations:migrate --no-interaction
+make clear_cache          # Wyczyść i rozgrzej cache
+```
+
+### Migracje
+```bash
+make generate_migrations  # Wygeneruj migracje porównując bazę z encjami
+make run_migrations       # Uruchom wszystkie oczekujące migracje
+```
+
+### PHP CS Fixer (formatowanie kodu)
+```bash
+make run_dry_fixer        # Sprawdź styl kodu (bez zmian)
+make run_fixer            # Napraw styl kodu automatycznie
+```
+
+### PHPStan (analiza statyczna)
+```bash
+make run_phpstan          # Uruchom analizę PHPStan
+make run_phpstan_baseline # Wygeneruj baseline PHPStan
+```
+
+### Testy
+
+> **Uwaga:** Testy używają oddzielnej bazy danych `instashot_test`. Po resecie volumes (`docker compose down -v`) należy ją utworzyć:
+> ```bash
+> docker-compose exec symfony php bin/console doctrine:database:create --env=test --if-not-exists
+> docker-compose exec symfony php bin/console doctrine:migrations:migrate --no-interaction --env=test
+> ```
+
+```bash
+make test                 # Uruchom wszystkie testy
+make test_unit            # Uruchom testy jednostkowe
+make test_integration     # Uruchom testy integracyjne
+make test_functional      # Uruchom testy funkcjonalne
+make test_coverage_text   # Testy z pokryciem (tekst)
+make test_coverage_html   # Testy z pokryciem (HTML w var/coverage)
 ```
 
 ### Ponowne tworzenie bazy danych
@@ -95,19 +150,9 @@ docker-compose exec symfony php bin/console doctrine:migrations:migrate --no-int
 docker-compose exec symfony php bin/console app:seed
 ```
 
-### Czyszczenie pamięci podręcznej (Cache)
-```bash
-docker-compose exec symfony php bin/console cache:clear
-```
-
 ### Restart
 ```bash
 docker-compose restart symfony
-```
-
-### Uruchamianie testów
-```bash
-docker-compose exec symfony php bin/phpunit
 ```
 
 ## Komendy Phoenix
