@@ -2,6 +2,7 @@ doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
         driver: 'pdo_pgsql'
+        use_savepoints: true
         charset: UTF8
     orm:
         auto_generate_proxy_classes: true
