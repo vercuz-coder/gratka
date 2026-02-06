@@ -3,8 +3,8 @@ services:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: phoenix_api
     volumes:
       - phoenix-db-data:/var/lib/postgresql/data
@@ -15,8 +15,8 @@ services:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: instashot
     volumes:
       - symfony-db-data:/var/lib/postgresql/data
@@ -31,8 +31,8 @@ services:
     depends_on:
       - phoenix-db
     environment:
-      DATABASE_URL: ecto://postgres:postgres@phoenix-db/phoenix_api
-      SECRET_KEY_BASE: ${PHOENIX_SECRET_KEY_BASE:-thisisasecret111}
+      DATABASE_URL: ecto://${POSTGRES_USER}:${POSTGRES_PASSWORD}@phoenix-db/phoenix_api
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
       PHX_HOST: 0.0.0.0
       PORT: 4000
     ports:
@@ -50,9 +50,9 @@ services:
       - phoenix
     environment:
       APP_ENV: dev
-      APP_SECRET: ${SYMFONY_APP_SECRET:-thisisasecret222}
+      APP_SECRET: ${APP_SECRET}
       PHOENIX_BASE_URL: http://phoenix:4000
-      DATABASE_URL: postgres://postgres:postgres@symfony-db:5432/instashot
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@symfony-db:5432/instashot
     ports:
       - "8000:8000"
     volumes:
@@ -61,3 +61,5 @@ services:
 volumes:
   phoenix-db-data:
   symfony-db-data:
+
+
