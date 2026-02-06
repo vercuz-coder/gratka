@@ -3,3 +3,6 @@
 /.env.local
 /.phpunit.result.cache
 node_modules/
+
+# PHP CS Fixer
+.php-cs-fixer.cache

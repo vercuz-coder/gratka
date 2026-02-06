@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\PhotoRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PhotoRepository::class)]
 #[ORM\Table(name: 'photos')]
+#[ORM\Index(columns: ['user_id'], name: 'idx_photos_user_id')]
+#[ORM\Index(columns: ['location'], name: 'idx_photos_location')]
+#[ORM\Index(columns: ['camera'], name: 'idx_photos_camera')]
+#[ORM\Index(columns: ['taken_at'], name: 'idx_photos_taken_at')]
 class Photo
 {
     #[ORM\Id]
@@ -29,13 +34,13 @@ class Photo
     private ?string $camera = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private ?\DateTimeImmutable $takenAt = null;
+    private ?DateTimeImmutable $takenAt = null;
 
     #[ORM\Column(type: 'integer', options: ['default' => 0])]
     private int $likeCounter = 0;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'photos')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private User $user;
 
     public function getId(): ?int
@@ -51,6 +56,7 @@ class Photo
     public function setImageUrl(string $imageUrl): self
     {
         $this->imageUrl = $imageUrl;
+
         return $this;
     }
 
@@ -62,6 +68,7 @@ class Photo
     public function setLocation(?string $location): self
     {
         $this->location = $location;
+
         return $this;
     }
 
@@ -73,6 +80,7 @@ class Photo
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -84,17 +92,19 @@ class Photo
     public function setCamera(?string $camera): self
     {
         $this->camera = $camera;
+
         return $this;
     }
 
-    public function getTakenAt(): ?\DateTimeImmutable
+    public function getTakenAt(): ?DateTimeImmutable
     {
         return $this->takenAt;
     }
 
-    public function setTakenAt(?\DateTimeImmutable $takenAt): self
+    public function setTakenAt(?DateTimeImmutable $takenAt): self
     {
         $this->takenAt = $takenAt;
+
         return $this;
     }
 
@@ -106,6 +116,7 @@ class Photo
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
         return $this;
     }
 
@@ -117,6 +128,7 @@ class Photo
     public function setLikeCounter(int $likeCounter): self
     {
         $this->likeCounter = $likeCounter;
+
         return $this;
     }
 }

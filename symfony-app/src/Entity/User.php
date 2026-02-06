@@ -7,17 +7,20 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'users')]
-class User
+#[ORM\UniqueConstraint(name: 'users_username_key', columns: ['username'])]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[ORM\Column(type: 'string', length: 180)]
     private string $username;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -35,6 +38,12 @@ class User
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $bio = null;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $phoenixApiToken = null;
+
+    /**
+     * @var Collection<int, Photo>
+     */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Photo::class, cascade: ['persist', 'remove'])]
     private Collection $photos;
 
@@ -56,6 +65,7 @@ class User
     public function setUsername(string $username): self
     {
         $this->username = $username;
+
         return $this;
     }
 
@@ -67,6 +77,7 @@ class User
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -78,6 +89,7 @@ class User
     public function setName(?string $name): self
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -89,6 +101,7 @@ class User
     public function setLastName(?string $lastName): self
     {
         $this->lastName = $lastName;
+
         return $this;
     }
 
@@ -100,6 +113,7 @@ class User
     public function setAge(?int $age): self
     {
         $this->age = $age;
+
         return $this;
     }
 
@@ -111,6 +125,19 @@ class User
     public function setBio(?string $bio): self
     {
         $this->bio = $bio;
+
+        return $this;
+    }
+
+    public function getPhoenixApiToken(): ?string
+    {
+        return $this->phoenixApiToken;
+    }
+
+    public function setPhoenixApiToken(?string $phoenixApiToken): self
+    {
+        $this->phoenixApiToken = $phoenixApiToken;
+
         return $this;
     }
 
@@ -130,6 +157,44 @@ class User
         }
 
         return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        // guarantee every user at least has ROLE_USER
+        $roles = ['ROLE_USER'];
+
+        return array_unique($roles);
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->username;
+    }
+
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): ?string
+    {
+        return null;
     }
 
     public function removePhoto(Photo $photo): self

@@ -4,43 +4,39 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\DTO\PhotoFilter;
 use App\Entity\User;
-use App\Likes\LikeRepository;
+use App\Form\PhotoFilterType;
+use App\Repository\LikeRepository;
 use App\Repository\PhotoRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/", name="home")
-     * @return JsonResponse
-     */
-    public function index(Request $request, EntityManagerInterface $em, ManagerRegistry $managerRegistry): Response
+    public function __construct(
+        private readonly PhotoRepository $photoRepository,
+        private readonly LikeRepository $likeRepository,
+    ) {
+    }
+
+    #[Route('/', name: 'home')]
+    public function index(Request $request): Response
     {
-        $photoRepository = new PhotoRepository($managerRegistry);
-        $likeRepository = new LikeRepository($managerRegistry);
+        $filter = new PhotoFilter();
+        $filterForm = $this->createForm(PhotoFilterType::class, $filter);
+        $filterForm->handleRequest($request);
 
-        $photos = $photoRepository->findAllWithUsers();
+        $photos = $this->photoRepository->findFiltered($filter);
 
-        $session = $request->getSession();
-        $userId = $session->get('user_id');
-        $currentUser = null;
+        $currentUser = $this->getUser();
         $userLikes = [];
 
-        if ($userId) {
-            $currentUser = $em->getRepository(User::class)->find($userId);
-
-            if ($currentUser) {
-                foreach ($photos as $photo) {
-                    $likeRepository->setUser($currentUser);
-                    $userLikes[$photo->getId()] = $likeRepository->hasUserLikedPhoto($photo);
-                }
+        if ($currentUser instanceof User) {
+            foreach ($photos as $photo) {
+                $userLikes[$photo->getId()] = null !== $this->likeRepository->findOneByUserAndPhoto($currentUser, $photo);
             }
         }
 
@@ -48,6 +44,7 @@ class HomeController extends AbstractController
             'photos' => $photos,
             'currentUser' => $currentUser,
             'userLikes' => $userLikes,
+            'filterForm' => $filterForm->createView(),
         ]);
     }
 }

@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'auth_tokens')]
+#[ORM\Index(columns: ['user_id'], name: 'idx_auth_tokens_user_id')]
+#[ORM\Index(columns: ['token'], name: 'idx_auth_tokens_token')]
 class AuthToken
 {
     #[ORM\Id]
@@ -19,15 +23,15 @@ class AuthToken
     private string $token;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private User $user;
 
     #[ORM\Column(type: 'datetime')]
-    private \DateTimeInterface $createdAt;
+    private DateTimeInterface $createdAt;
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new DateTime();
     }
 
     public function getId(): ?int
@@ -43,6 +47,7 @@ class AuthToken
     public function setToken(string $token): self
     {
         $this->token = $token;
+
         return $this;
     }
 
@@ -54,17 +59,19 @@ class AuthToken
     public function setUser(User $user): self
     {
         $this->user = $user;
+
         return $this;
     }
 
-    public function getCreatedAt(): \DateTimeInterface
+    public function getCreatedAt(): DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
         return $this;
     }
 }

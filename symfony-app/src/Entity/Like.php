@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Likes;
+namespace App\Entity;
 
-use App\Entity\Photo;
-use App\Entity\User;
+use App\Repository\LikeRepository;
+use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LikeRepository::class)]
 #[ORM\Table(name: 'likes')]
+#[ORM\Index(columns: ['user_id'], name: 'idx_likes_user_id')]
+#[ORM\Index(columns: ['photo_id'], name: 'idx_likes_photo_id')]
 class Like
 {
     #[ORM\Id]
@@ -18,19 +21,19 @@ class Like
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private User $user;
 
     #[ORM\ManyToOne(targetEntity: Photo::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Photo $photo;
 
     #[ORM\Column(type: 'datetime')]
-    private \DateTimeInterface $createdAt;
+    private DateTimeInterface $createdAt;
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new DateTime();
     }
 
     public function getUser(): User
@@ -41,6 +44,7 @@ class Like
     public function setUser(User $user): self
     {
         $this->user = $user;
+
         return $this;
     }
 
@@ -52,17 +56,19 @@ class Like
     public function setPhoto(Photo $photo): self
     {
         $this->photo = $photo;
+
         return $this;
     }
 
-    public function getCreatedAt(): \DateTimeInterface
+    public function getCreatedAt(): DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
         return $this;
     }
 }
